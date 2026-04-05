@@ -1,9 +1,6 @@
-from operator import or_
 
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.base import state_str
-
 from src.models.user import User
 
 
