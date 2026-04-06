@@ -1,7 +1,7 @@
 
 import uuid
 from datetime import datetime
-from sqlalchemy import UUID, String, ForeignKey, BigInteger, text, func
+from sqlalchemy import String, ForeignKey, text, func, UUID, BigInteger
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -18,6 +18,8 @@ class Product(Base):
     price_cents: Mapped[int] = mapped_column(BigInteger)
     #sku: Mapped[str] =
     description: Mapped[str | None]
-    attributes: Mapped[dict] = mapped_column(JSONB, server_default=text("'{}"), nullable=False)
+    attributes: Mapped[dict] = mapped_column(JSONB, server_default=text("'{}'"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
+
+    category : Mapped["Category"] = relationship()

@@ -9,8 +9,9 @@ from alembic import context
 
 from src.globals.config import settings
 from src.globals.basemodel import Base
-
-#from models.product import Product
+from src.products.models import Product #keep it
+from src.users.models import User
+from src.categories.models import Category
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

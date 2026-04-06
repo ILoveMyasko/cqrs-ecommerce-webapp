@@ -26,7 +26,7 @@ class UserService:
             email=str(create_dto.email),
             username=create_dto.username,
             hashed_password=hashed_password,
-            is_superuser=create_dto.is_superuser)
+            is_superuser=create_dto.is_superuser,)
 
         new_user = await self.repository.create(user_to_create)
         return new_user
