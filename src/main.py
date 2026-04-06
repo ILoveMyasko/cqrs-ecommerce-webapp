@@ -2,9 +2,8 @@ from fastapi import FastAPI
 
 from contextlib import asynccontextmanager
 
-from src.api.routes.users_controller import router as users_router
-from src.core.db import sessionmanager
-from src.models.user import User
+from src.users.router import router as users_router
+from src.database import sessionmanager
 from src.api.dependecies.db_dep import DBSessionDep
 
 @asynccontextmanager

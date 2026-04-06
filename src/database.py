@@ -1,21 +1,17 @@
 import contextlib
-from typing import Any, AsyncIterator
+from typing import Any, AsyncIterator, Annotated
 
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncSession,
-    AsyncEngine,
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import DeclarativeBase
 
-from src.core.config import settings
+from src.config import settings
 
 
-# class Base(DeclarativeBase):
-#     # https://docs.sqlalchemy.org/en/14/orm/extensions/asyncio.html#preventing-implicit-io-when-using-asyncsession
-#     __mapper_args__ = {"eager_defaults": True}
 
 # Heavily inspired by https://praciano.com.br/fastapi-and-async-sqlalchemy-20-with-pytest-done-right.html
 class DatabaseSessionManager:
@@ -66,3 +62,5 @@ sessionmanager = DatabaseSessionManager(settings.DATABASE_URL, {"echo": settings
 async def get_db_session():
     async with sessionmanager.session() as session:
         yield session
+
+DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]

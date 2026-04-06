@@ -5,8 +5,8 @@ from sqlalchemy import UUID, String, ForeignKey, BigInteger, text, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.basemodel import Base
-from src.models.category import Category
+from src.basemodel import Base
+from src.categories.models import Category
 
 
 class Product(Base):

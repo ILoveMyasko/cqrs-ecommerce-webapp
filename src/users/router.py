@@ -1,11 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import EmailStr
-from src.api.dependecies.db_dep import DBSessionDep
-from src.api.dependecies.service_dep import UserServiceDep
-from src.models.user import User
-from src.schemas.user_schema import UserRead, UserCreate
-from src.services.user_service import UserService
 
+from src.users.dependencies import UserServiceDep
+from src.users.schemas import UserRead, UserCreate
 router = APIRouter(
     prefix="/users",
 )

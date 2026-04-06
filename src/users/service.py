@@ -1,8 +1,8 @@
 from fastapi import HTTPException
-from src.core.security import hash_password
-from src.crud.user_repository import UserRepository
-from src.models.user import User
-from src.schemas.user_schema import UserCreate
+from src.security import hash_password
+from src.users.repository import UserRepository
+from src.users.models import User
+from src.users.schemas import UserCreate
 
 
 class UserService:

@@ -1,11 +1,10 @@
 import uuid
-from email.policy import default
 from typing import Optional, List
 
 from sqlalchemy import UUID, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.basemodel import Base
+from src.basemodel import Base
 
 
 class Category(Base):
