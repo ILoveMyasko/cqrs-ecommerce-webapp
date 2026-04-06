@@ -1,4 +1,3 @@
-import contextlib
 from typing import Any, AsyncIterator, Annotated
 
 from fastapi import Depends
@@ -9,9 +8,9 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from src.config import settings
+from src.globals.config import settings
 
-
+from contextlib import asynccontextmanager
 
 # Heavily inspired by https://praciano.com.br/fastapi-and-async-sqlalchemy-20-with-pytest-done-right.html
 class DatabaseSessionManager:
@@ -29,7 +28,7 @@ class DatabaseSessionManager:
         self._engine = None
         self._sessionmaker = None
 
-    @contextlib.asynccontextmanager
+    @asynccontextmanager
     async def connect(self) -> AsyncIterator[AsyncConnection]:
         if self._engine is None:
             raise Exception("DatabaseSessionManager is not initialized")
@@ -41,7 +40,7 @@ class DatabaseSessionManager:
                 await connection.rollback()
                 raise
 
-    @contextlib.asynccontextmanager
+    @asynccontextmanager
     async def session(self) -> AsyncIterator[AsyncSession]:
         if self._sessionmaker is None:
             raise Exception("DatabaseSessionManager is not initialized")
