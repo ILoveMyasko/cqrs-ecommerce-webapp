@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from src.security import hash_password
+from src.globals.security import hash_password
 from src.users.repository import UserRepository
 from src.users.models import User
 from src.users.schemas import UserCreate
@@ -12,7 +12,7 @@ class UserService:
     async def create_user(self, create_dto: UserCreate) -> User:
         existing_users = await self.repository.get_by_unique_fields(
             username=create_dto.username,
-            email=create_dto.email
+            email=str(create_dto.email)
         )
         if existing_users:
             for user in existing_users:
@@ -23,7 +23,7 @@ class UserService:
 
         hashed_password = hash_password(create_dto.password)
         user_to_create = User(
-            email=create_dto.email,
+            email=str(create_dto.email),
             username=create_dto.username,
             hashed_password=hashed_password,
             is_superuser=create_dto.is_superuser)

@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from src.globals.database import DBSessionDep
 from src.users.repository import UserRepository
 from src.users.service import UserService
 
