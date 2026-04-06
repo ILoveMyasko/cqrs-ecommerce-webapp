@@ -5,7 +5,7 @@ from sqlalchemy import UUID, String, ForeignKey, BigInteger, text, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.basemodel import Base
+from src.globals.basemodel import Base
 from src.categories.models import Category
 
 
@@ -21,5 +21,3 @@ class Product(Base):
     attributes: Mapped[dict] = mapped_column(JSONB, server_default=text("'{}"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
-
-    category:Mapped["Category"] = relationship("Category", back_populates="products")
