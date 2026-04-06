@@ -21,7 +21,7 @@ async def get_user_by_email(
         user_service: UserServiceDep,
         email: EmailStr,
 ):
-    return await user_service.get_user_by_email(email)
+    return await user_service.get_user_by_email(str(email)) #hate you
 
 
 @router.post("/", response_model=UserRead, status_code=201)
