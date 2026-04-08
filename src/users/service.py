@@ -9,27 +9,27 @@ class UserService:
     def __init__(self, repository: UserRepository):
         self.repository = repository
 
-    async def create_user(self, create_dto: UserCreate) -> User:
+    async def create_user(self, to_create: UserCreate) -> User:
         existing_users = await self.repository.get_by_unique_fields(
-            username=create_dto.username,
-            email=str(create_dto.email)
+            username=to_create.username,
+            email=str(to_create.email)
         )
         if existing_users:
             for user in existing_users:
-                if user.email == create_dto.email:
+                if user.email == to_create.email:
                     raise HTTPException(status_code=400, detail="Email taken")
-                if user.username == create_dto.username:
+                if user.username == to_create.username:
                     raise HTTPException(status_code=400, detail="Username taken")
 
-        hashed_password = hash_password(create_dto.password)
+        hashed_password = hash_password(to_create.password)
         user_to_create = User(
-            email=str(create_dto.email),
-            username=create_dto.username,
+            email=str(to_create.email),
+            username=to_create.username,
             hashed_password=hashed_password,
-            is_superuser=create_dto.is_superuser,)
+            is_superuser=to_create.is_superuser,)
 
-        new_user = await self.repository.create(user_to_create)
-        return new_user
+        created_user = await self.repository.create(user_to_create)
+        return created_user
 
     async def get_user_by_id(self, user_id: int) -> User:
         user = await self.repository.get_by_id(user_id)

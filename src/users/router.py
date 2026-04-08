@@ -27,8 +27,8 @@ async def get_user_by_email(
 @router.post("/", response_model=UserRead, status_code=201)
 async def add_user(
         user_service: UserServiceDep,
-        create_user_dto: UserCreate
+        user_to_create_dto: UserCreate
 ):
-    created_user = await user_service.create_user(create_user_dto)
+    created_user = await user_service.create_user(user_to_create_dto)
     print(f"DEBUG: result is {created_user}")
     return created_user
