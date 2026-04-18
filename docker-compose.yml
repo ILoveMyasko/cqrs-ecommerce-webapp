@@ -14,13 +14,15 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   elastic:
-    image: elasticsearch:8.19.13
+    image: elasticsearch:9.2.8
     container_name: elasticsearch
+    ports:
+      - "9200:9200"
     environment:
       discovery.type: "single-node"
       xpack.security.enabled: "false"
-    ports:
-      - "9200:9200"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
 
   kafka:
     image: apache/kafka:4.0.2
@@ -28,21 +30,27 @@ services:
     depends_on:
       - postgres
       - elastic
+    ports:
+      - "29092:29092"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: 'broker,controller'
-
+      KAFKA_LOG_CLEANUP_POLICY: compact
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
+      KAFKA_LOG_CLEANER_DELETE_RETENTION_MS: 86400000
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
-      KAFKA_LISTENERS: 'PLAINTEXT://:9092,CONTROLLER://:9093'
-      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
+      KAFKA_LISTENERS: 'INTERNAL://:9092,EXTERNAL://:29092,CONTROLLER://:9093'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
+      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka:9092,EXTERNAL://localhost:29092'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
 
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
 
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-
+    volumes:
+      - kafka_data:/var/lib/kafka/data
 
   kafka-connect-debezium:
     image: quay.io/debezium/connect:3.4.3
@@ -58,11 +66,9 @@ services:
       CONFIG_STORAGE_TOPIC: "debezium_configs"
       OFFSET_STORAGE_TOPIC: "debezium_offsets"
       STATUS_STORAGE_TOPIC: "debezium_statuses"
-      KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
-      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
 
 
 volumes:
   postgres-data:
+  elastic_data:
+  kafka_data:
