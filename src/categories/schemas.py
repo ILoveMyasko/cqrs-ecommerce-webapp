@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class CategoryBase(BaseModel):
-    parent_id: UUID | None
+    parent_id: UUID | None = None
     name: str
 
 class CategoryRead(CategoryBase):
@@ -14,3 +14,7 @@ class CategoryRead(CategoryBase):
 
 class CategoryCreate(CategoryBase):
     pass
+
+class CategoryElasticDocument(CategoryRead):
+    parent_name : str | None = None
+
