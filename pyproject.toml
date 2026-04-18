@@ -16,4 +16,8 @@ dependencies = [
     "email-validator>=2.3.0",
     "bcrypt>=5.0.0",
     "pylint>=4.0.5",
+    "elasticsearch[async]>=9.3.0",
+    "faststream[cli,kafka]>=0.6.7",
+    "cachetools>=7.0.5",
+    "httpx>=0.28.1",
 ]
