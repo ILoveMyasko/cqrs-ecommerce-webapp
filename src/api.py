@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI
 
 from contextlib import asynccontextmanager
@@ -8,9 +10,12 @@ from src.globals.database import sessionmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    #consumer_task = asyncio.create_task()
     yield
     if sessionmanager._engine is not None:
         await sessionmanager.close()
+        #TODO: elastic handle
+
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(users_router)
