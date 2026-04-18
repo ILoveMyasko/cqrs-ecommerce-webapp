@@ -48,6 +48,7 @@ class DatabaseSessionManager:
         session = self._sessionmaker()
         try:
             yield session
+            await session.commit()
         except Exception:
             await session.rollback()
             raise
@@ -58,8 +59,9 @@ class DatabaseSessionManager:
 sessionmanager = DatabaseSessionManager(settings.DATABASE_URL, {"echo": settings.echo_sql})
 
 
-async def get_db_session():
+async def get_db_session() -> AsyncIterator[AsyncSession]:
     async with sessionmanager.session() as session:
         yield session
+
 
 DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]

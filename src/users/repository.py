@@ -43,6 +43,6 @@ class UserRepository:
 
     async def create(self, new_user: User):
         self.session.add(new_user)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(new_user)
         return new_user

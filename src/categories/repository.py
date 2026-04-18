@@ -17,6 +17,6 @@ class CategoryRepository:
 
     async def create(self, new_category : Category):
         self.session.add(new_category)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(new_category)
         return new_category
