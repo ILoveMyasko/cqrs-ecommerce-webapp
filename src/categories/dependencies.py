@@ -6,8 +6,8 @@ from src.globals.database import DBSessionDep
 from src.categories.repository import CategoryRepository
 from src.categories.service import CategoryService
 
-def get_category_repository(db: DBSessionDep) -> CategoryRepository:
-    return CategoryRepository(db)
+def get_category_repository(session: DBSessionDep) -> CategoryRepository:
+    return CategoryRepository(session)
 
 CategoryRepositoryDep = Annotated[CategoryRepository, Depends(get_category_repository)]
 

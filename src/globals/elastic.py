@@ -1,4 +1,8 @@
+from typing import Annotated
+
 from elasticsearch import AsyncElasticsearch
+from fastapi import Depends
+
 from src.globals.config import settings
 
 class ElasticManager:
@@ -13,3 +17,8 @@ class ElasticManager:
             await self.client.close()
 
 es_manager = ElasticManager()
+
+async def get_es_client() -> AsyncElasticsearch:
+    return es_manager.client
+
+ESClientDep = Annotated[AsyncElasticsearch, Depends(get_es_client)]

@@ -3,6 +3,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     DATABASE_URL: str
+    DATABASE_PASSWORD: str
+    DATABASE_USER: str
     echo_sql: bool = True
     KAFKA_URL: str = "localhost:9092"
     ELASTIC_URL: str = "localhost:9200"

@@ -20,4 +20,5 @@ dependencies = [
     "faststream[cli,kafka]>=0.6.7",
     "cachetools>=7.0.5",
     "httpx>=0.28.1",
+    "ipykernel>=7.2.0",
 ]
