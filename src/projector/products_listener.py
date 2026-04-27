@@ -1,9 +1,10 @@
-from typing import Any
+import re
+from typing import Any, Dict, List
 from uuid import UUID
 from faststream.kafka import KafkaRouter
 from src.categories.service import CategoryService
 from src.globals.elastic import es_manager
-from src.products.schemas import ProductRead, ProductElasticDocument
+from src.products.schemas import ProductRead, ProductElasticDocument, AttributeNested
 from src.projector.config import projector_settings
 from src.projector.dependencies import CategoryServiceProjectorDep
 from src.projector.schemas import DebeziumPayload
@@ -49,14 +50,54 @@ async def _upsert_product_in_elastic(
     category_service: CategoryService
 ):
     category_name = await resolve_category_name(product.category_id, category_service)
-
+    nested_attributes = transform_attributes(product.attributes or {})
+    catch_all_string = create_catch_all(product, category_name, nested_attributes)
+    doc_data = product.model_dump(exclude={"attributes"})
     doc = ProductElasticDocument(
-        **product.model_dump(),
+        **doc_data,
+        attributes=nested_attributes,
+        catch_all=catch_all_string,
         category_name=category_name
     )
-
+    print(doc)
     await es_manager.client.index(
         index="products",
         id=str(product.id),
         document=doc.model_dump(mode="json")
     )
+
+def transform_attributes(raw_attributes: Dict[str, Any]) -> List[AttributeNested]:
+    """
+    Превращает {"color": "black", "weight": "1.5 kg"}
+    в список объектов для Nested field.
+    """
+    nested_attrs = []
+    for key, value in raw_attributes.items():
+        val_str = str(value)
+        val_num = None
+
+        match = re.search(r"[-+]?\d*\.\d+|\d+", val_str)
+        if match:
+            try:
+                val_num = float(match.group())
+            except ValueError:
+                val_num = None
+
+        nested_attrs.append(AttributeNested(
+            key=key,
+            value_keyword=val_str,
+            value_number=val_num
+        ))
+    return nested_attrs
+
+def create_catch_all(product: Any, category_name: str, attrs: List[AttributeNested]) -> str:
+
+    parts = [
+        str(product.name),
+        str(product.brand or ""),
+        str(category_name)
+    ]
+
+    parts.extend([a.value_keyword for a in attrs])
+
+    return " ".join(filter(None, parts))
