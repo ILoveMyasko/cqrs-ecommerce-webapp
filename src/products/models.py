@@ -14,6 +14,7 @@ class Product(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),primary_key=True, default=uuid.uuid7)
     name: Mapped[str] = mapped_column(String(512), nullable=False)
+    brand: Mapped[str]
     category_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("categories.id"), index=True)
     price_cents: Mapped[int] = mapped_column(BigInteger)
     description: Mapped[str | None]
