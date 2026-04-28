@@ -1,8 +1,8 @@
 import uuid
 from datetime import datetime
-from typing import Any, Optional, List
+from typing import Any, Optional, List, Dict
 
-from pydantic import BaseModel, Field, Json, ConfigDict
+from pydantic import BaseModel, Field, Json, ConfigDict, field_validator
 
 
 class ProductBase(BaseModel):
@@ -33,4 +33,23 @@ class ProductElasticDocument(ProductRead):
     category_name: str
     catch_all: str
 
+
+class ProductSearchParams(BaseModel):
+    q: str = Field(..., min_length=1)
+    category_id: Optional[uuid.UUID] = None
+    page: int = Field(1, ge=1)
+    size: int = Field(24, ge=1, le=100)
+    attrs: List[str] = Field(default_factory=list)
+
+    @field_validator("attrs")
+    def validate_attrs(cls, v):
+        for item in v:
+            if ":" not in item:
+                raise ValueError(f"Атрибут '{item}' должен быть в формате key:value")
+        return v
+
+class SearchResponse(BaseModel):
+    total: int
+    items: List[Dict[str, Any]]
+    aggregations: Optional[Dict[str, Any]]
 

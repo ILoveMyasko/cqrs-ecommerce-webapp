@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from src.categories.service import CategoryService
 from src.products.models import Product
 from src.products.repository import ProductRepository
-from src.products.schemas import ProductCreate
+from src.products.schemas import ProductCreate, ProductSearchParams, SearchResponse
 from src.products.search_repository import ProductSearchRepository
 
 
@@ -29,5 +29,11 @@ class ProductService:
             raise HTTPException(404, "Product not found")
         return product
 
-    async def search_product(self, uuid: UUID):
-        data = await self.search_repo._es
+    async def search_products(self, params: ProductSearchParams) -> SearchResponse:
+        raw_response = await self.search_repo.search(params)
+
+        return SearchResponse(
+            total=raw_response["hits"]["total"]["value"],
+            items=[hit["_source"] for hit in raw_response["hits"]["hits"]],
+            aggregations=raw_response.get("aggregations")
+        )
