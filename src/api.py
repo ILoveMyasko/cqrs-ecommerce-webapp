@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
     if sessionmanager._engine is not None:
         await sessionmanager.close()
         #TODO: elastic handle
-    es_manager.close()
+    await es_manager.close()
 
 app = FastAPI(lifespan=lifespan)
 
